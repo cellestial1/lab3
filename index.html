@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Калькулятор бюджету</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .calculator {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 340px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #2b87d1;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #246faa;
+    }
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h1>Калькулятор бюджету</h1>
+    <input type="number" id="income" placeholder="Місячний дохід">
+
+    <input type="number" id="rent" placeholder="Квартплата">
+    <input type="number" id="utilities" placeholder="Комунальні послуги">
+    <input type="number" id="entertainment" placeholder="Розваги">
+    <input type="number" id="groceries" placeholder="Харчі">
+    <input type="number" id="other" placeholder="Інші витрати">
+
+    <select id="currency">
+      <option value="UAH">₴ Гривня</option>
+      <option value="USD">$ Долар</option>
+      <option value="EUR">€ Євро</option>
+    </select>
+    <button onclick="calculateBudget()">Розрахувати</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const exchangeRates = {
+      UAH: 1,
+      USD: 40,
+      EUR: 43
+    };
+
+    function calculateBudget() {
+      const income = parseFloat(document.getElementById('income').value);
+      const rent = parseFloat(document.getElementById('rent').value) || 0;
+      const utilities = parseFloat(document.getElementById('utilities').value) || 0;
+      const entertainment = parseFloat(document.getElementById('entertainment').value) || 0;
+      const groceries = parseFloat(document.getElementById('groceries').value) || 0;
+      const other = parseFloat(document.getElementById('other').value) || 0;
+
+      const totalExpenses = rent + utilities + entertainment + groceries + other;
+
+      const currency = document.getElementById('currency').value;
+      const result = document.getElementById('result');
+
+      if (isNaN(income)) {
+        result.textContent = 'Будь ласка, введіть коректний дохід.';
+        result.classList.add('show');
+        return;
+      }
+
+      const balanceUAH = income - totalExpenses;
+      const rate = exchangeRates[currency];
+      const convertedBalance = balanceUAH / rate;
+
+      let symbol = '';
+      if (currency === 'USD') symbol = '$';
+      else if (currency === 'EUR') symbol = '€';
+      else symbol = '₴';
+
+      result.textContent = `Залишок бюджету: ${convertedBalance.toFixed(2)} ${symbol}`;
+      result.classList.add('show');
+    }
+  </script>
+</body>
+</html>
